@@ -1,6 +1,6 @@
 # CRUD con Node.js
 
-## Instalación
+## Instalar
 
 ```shell
 npm install
