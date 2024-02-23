@@ -1,49 +1,10 @@
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Productos</title>
-    <link rel="stylesheet" href="./css/style.css" />
-  </head>
-  <body>
-    <header>
-      <nav>
-        <a href="/">Inicio</a>
-        <a href="/productos">Productos</a>
-      </nav>
-    </header>
-    <main>
-      <h1>Productos</h1>
+<h1>Productos</h1>
 
-      <!-- <table>
-      <thead>
-        <tr>
-          <th>Titulo</th>
-          <th>Descripción</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% productos.forEach(producto => { %>
-        <tr>
-          <td><%= producto.title %></td>
-          <td><%= producto.description %></td>
-        </tr>
-        <% }) %>
-      </tbody>
-    </table> -->
-
-      <section class="products">
-        <% productos.forEach(producto => { %>
-        <article>
-          <h2><%= producto.title %></h2>
-          <p><%= producto.description %></p>
-        </article>
-        <% }) %>
-      </section>
-    </main>
-    <footer>
-      <small> Copyright 2024 </small>
-    </footer>
-  </body>
-</html>
+<section class="products">
+  <% productos.forEach(producto => { %>
+  <article>
+    <h2><%= producto.title %></h2>
+    <p><%= producto.description %></p>
+  </article>
+  <% }) %>
+</section>
