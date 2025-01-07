@@ -1,120 +1,96 @@
-const fs = require("fs");
-const path = require("path");
-
-let categorias = [];
+const model = require("../models/Category");
 
 const create = (req, res) => {
   res.render("categorias/create");
 };
 
 const store = (req, res) => {
-  const { nombre } = req.body;
+  const { name } = req.body;
 
-  const categoria = {
-    id: Date.now(),
-    nombre,
-  };
+  model.create(name, (error, id) => {
+    if (error) {
+      // console.error(error);
 
-  categorias.push(categoria);
+      return res.status(500).send("Internal Server Error");
+    }
 
-  fs.writeFileSync(
-    path.resolve(__dirname, "../../categorias.json"),
-    JSON.stringify(categorias)
-  );
+    console.log(id);
 
-  res.redirect("/categorias");
+    res.redirect("/categorias");
+  });
 };
 
 const index = (req, res) => {
-  try {
-    categorias = JSON.parse(
-      fs.readFileSync(path.resolve(__dirname, "../../categorias.json"), "utf-8")
-    );
-  } catch (error) {
-    categorias = [];
-  }
+  model.findAll((error, categorias) => {
+    if (error) {
+      return res.status(500).send("Internal Server Error");
+    }
 
-  res.render("categorias/index", { categorias });
+    res.render("categorias/index", { categorias });
+  });
 };
 
 const show = (req, res) => {
-  categorias = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "../../categorias.json"), "utf-8")
-  );
-
   const { id } = req.params;
 
-  const categoria = categorias.find((categoria) => categoria.id == id);
-  //   console.log(categoria);
+  model.findById(id, (error, categoria) => {
+    if (error) {
+      return res.status(500).send("Internal Server Error");
+    }
 
-  if (!categoria) {
-    return res.status(404).send("No existe la categoria");
-  }
+    // console.log(categoria);
 
-  res.render("categorias/show", { categoria });
+    if (!categoria) {
+      return res.status(404).send("No existe la categoría");
+    }
+
+    res.render("categorias/show", { categoria });
+  });
 };
 
 const edit = (req, res) => {
-  categorias = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "../../categorias.json"), "utf-8")
-  );
-
   const { id } = req.params;
 
-  const categoria = categorias.find((categoria) => categoria.id == id);
+  model.findById(id, (error, categoria) => {
+    if (error) {
+      return res.status(500).send("Internal Server Error");
+    }
 
-  if (!categoria) {
-    return res.status(404).send("No existe la categoria");
-  }
+    if (!categoria) {
+      return res.status(404).send("No existe la categoría");
+    }
 
-  res.render("categorias/edit", { categoria });
+    res.render("categorias/edit", { categoria });
+  });
 };
 
 const update = (req, res) => {
-  categorias = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "../../categorias.json"), "utf-8")
-  );
-
   const { id } = req.params;
-  const { nombre } = req.body;
+  const { name } = req.body;
 
-  const categoria = categorias.find((categoria) => categoria.id == id);
+  model.update(id, name, (error, changes) => {
+    if (error) {
+      return res.status(500).send("Internal Server Error");
+    }
 
-  if (!categoria) {
-    return res.status(404).send("No existe la categoria");
-  }
+    // console.log(changes);
 
-  categoria.nombre = nombre;
-
-  fs.writeFileSync(
-    path.resolve(__dirname, "../../categorias.json"),
-    JSON.stringify(categorias)
-  );
-
-  res.redirect("/categorias");
+    res.redirect("/categorias");
+  });
 };
 
 const destroy = (req, res) => {
-  categorias = JSON.parse(
-    fs.readFileSync(path.resolve(__dirname, "../../categorias.json"), "utf-8")
-  );
-
   const { id } = req.params;
 
-  const index = categorias.findIndex((categoria) => categoria.id == id);
+  model.destroy(id, (error, changes) => {
+    if (error) {
+      return res.status(500).send("Internal Server Error");
+    }
 
-  if (index == -1) {
-    return res.status(404).send("No existe la categoria");
-  }
+    // console.log(changes);
 
-  categorias.splice(index, 1);
-
-  fs.writeFileSync(
-    path.resolve(__dirname, "../../categorias.json"),
-    JSON.stringify(categorias)
-  );
-
-  res.redirect("/categorias");
+    res.redirect("/categorias");
+  });
 };
 
 module.exports = {
