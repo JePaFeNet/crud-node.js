@@ -8,6 +8,7 @@
     <thead>
       <tr>
         <th>Nombre</th>
+        <th>Categoría</th>
         <th></th>
       </tr>
     </thead>
@@ -17,6 +18,7 @@
         <td>
           <a href="/productos/<%= producto.id %>"><%= producto.name %></a>
         </td>
+        <td><%= producto.category?.name %></td>
         <td class="cell-inline">
           <a
             class="button button--primary"

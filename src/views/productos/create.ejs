@@ -5,5 +5,14 @@
     <label class="form__label" for="nombre">Nombre:</label>
     <input class="form__input" type="text" name="name" id="nombre" />
   </div>
+  <div class="form__group">
+    <label class="form__label" for="categoryId">Categoría:</label>
+    <select class="form__input" name="categoryId" id="categoryId">
+      <option value=""></option>
+      <% categorias.forEach(categoria => { %>
+      <option value="<%= categoria.id %>"><%= categoria.name %></option>
+      <% }) %>
+    </select>
+  </div>
   <button class="button button--primary" type="submit">Guardar</button>
 </form>

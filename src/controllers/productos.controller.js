@@ -1,15 +1,22 @@
-const querystring = require("querystring");
 const model = require("../models/Product");
+const modelCategory = require("../models/Category");
 
-const create = (req, res) => {
-  res.render("productos/create");
+const create = async (req, res) => {
+  try {
+    const categorias = await modelCategory.findAll();
+
+    res.render("productos/create", { categorias });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Internal Server Error");
+  }
 };
 
 const store = async (req, res) => {
-  const { name } = req.body;
+  const { name, categoryId } = req.body;
 
   try {
-    const result = await model.store(name);
+    const result = await model.create({ name, categoryId });
     console.log(result);
     res.redirect("/productos");
   } catch (error) {
@@ -20,7 +27,9 @@ const store = async (req, res) => {
 
 const index = async (req, res) => {
   try {
-    const productos = await model.findAll();
+    const productos = await model.findAll({
+      include: "category",
+    });
     res.render("productos/index", { productos });
   } catch (error) {
     console.log(error);
@@ -32,7 +41,7 @@ const show = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const producto = await model.findById(id);
+    const producto = await model.findByPk(id);
     console.log(producto);
     if (!producto) {
       return res.status(404).send("Producto no encontrado");
@@ -48,12 +57,16 @@ const edit = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const producto = await model.findById(id);
+    const producto = await model.findByPk(id);
     console.log(producto);
+
     if (!producto) {
       return res.status(404).send("Producto no encontrado");
     }
-    res.render("productos/edit", { producto });
+
+    const categorias = await modelCategory.findAll();
+
+    res.render("productos/edit", { producto, categorias });
   } catch (error) {
     console.log(error);
     return res.status(500).send("Internal Server Error");
@@ -62,11 +75,12 @@ const edit = async (req, res) => {
 
 const update = async (req, res) => {
   const { id } = req.params;
-  const { name } = req.body;
+  const { name, categoryId } = req.body;
 
   try {
-    const result = await model.update(id, name);
+    const result = await model.update({ name, categoryId }, { where: { id } });
     console.log(result);
+
     res.redirect("/productos");
   } catch (error) {
     console.log(error);
@@ -78,7 +92,7 @@ const destroy = async (req, res) => {
   const { id } = req.params;
 
   try {
-    const result = await model.destroy(id);
+    const result = await model.destroy({ where: { id } });
     console.log(result);
     res.redirect("/productos");
   } catch (error) {
