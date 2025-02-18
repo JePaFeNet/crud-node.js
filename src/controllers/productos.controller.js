@@ -1,3 +1,8 @@
+const path = require("path");
+const fs = require("fs");
+
+const sharp = require("sharp");
+
 const model = require("../models/Product");
 const modelCategory = require("../models/Category");
 
@@ -16,7 +21,9 @@ const store = async (req, res) => {
   const { name, categoryId } = req.body;
 
   try {
-    const result = await model.create({ name, categoryId });
+    const image = await upload(req.file);
+
+    const result = await model.create({ name, image, categoryId });
     console.log(result);
     res.redirect("/productos");
   } catch (error) {
@@ -76,10 +83,28 @@ const edit = async (req, res) => {
 const update = async (req, res) => {
   const { id } = req.params;
   const { name, categoryId } = req.body;
+  // const { filename: image } = req.file;
 
   try {
-    const result = await model.update({ name, categoryId }, { where: { id } });
+    const image = await upload(req.file);
+
+    const producto = await model.findByPk(id);
+
+    const result = await model.update(
+      { name, image, categoryId },
+      { where: { id } }
+    );
     console.log(result);
+
+    if (producto.image) {
+      const imagePath = path.resolve(
+        __dirname,
+        "../../public/uploads",
+        producto.image
+      );
+
+      fs.unlinkSync(imagePath);
+    }
 
     res.redirect("/productos");
   } catch (error) {
@@ -99,6 +124,20 @@ const destroy = async (req, res) => {
     console.log(error);
     return res.status(500).send("Internal Server Error");
   }
+};
+
+const upload = async (file) => {
+  if (!file) {
+    return null;
+  }
+
+  const imageName = Date.now() + path.extname(file.originalname);
+
+  const imagePath = path.resolve(__dirname, "../../public/uploads", imageName);
+
+  await sharp(file.buffer).resize(300).toFile(imagePath);
+
+  return imageName;
 };
 
 module.exports = {

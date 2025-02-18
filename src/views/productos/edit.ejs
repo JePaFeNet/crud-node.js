@@ -4,6 +4,7 @@
   class="form"
   action="/productos/<%= producto.id %>?_method=PUT"
   method="post"
+  enctype="multipart/form-data"
 >
   <div class="form__group">
     <label class="form__label" for="nombre">Nombre:</label>
@@ -15,6 +16,25 @@
       value="<%= producto.name %>"
     />
   </div>
+
+  <div class="form__group">
+    <label class="form__label" for="image">Imagen:</label>
+    <input
+      class="form__input"
+      accept="image/*"
+      type="file"
+      name="image"
+      id="image"
+    />
+    <div>
+      <img
+        width="100"
+        src="/uploads/<%= producto.image ?? 'no-photo.png' %>"
+        alt="<%= producto.name %>"
+      />
+    </div>
+  </div>
+
   <div class="form__group">
     <label class="form__label" for="categoryId">Categoría:</label>
     <select class="form__input" name="categoryId" id="categoryId">

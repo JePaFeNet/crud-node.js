@@ -1,13 +1,15 @@
 <h1>Listado de Productos</h1>
 
 <a class="button button--primary" href="/productos/create"
-  >Crear una producto</a>
+  >Crear una producto</a
+>
 
 <section class="listados">
   <table>
     <thead>
       <tr>
         <th>Nombre</th>
+        <th>Imagen</th>
         <th>Categoría</th>
         <th></th>
       </tr>
@@ -17,6 +19,13 @@
       <tr>
         <td>
           <a href="/productos/<%= producto.id %>"><%= producto.name %></a>
+        </td>
+        <td>
+          <img
+            width="100"
+            src="/uploads/<%= producto.image ?? 'no-photo.png' %>"
+            alt="<%= producto.name %>"
+          />
         </td>
         <td><%= producto.category?.name %></td>
         <td class="cell-inline">
